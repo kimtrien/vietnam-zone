@@ -55,7 +55,7 @@ database/migrations/2020_01_01_000002_create_districts_table.php
 database/migrations/2020_01_01_000003_create_wards_table.php
 ```
 
-#### Chạy migration
+## Run migration
 
 ```shell
 php artisan migrate
@@ -69,8 +69,8 @@ php artisan vietnamzone:download
 
 ## Todo
 
-- [ ] Command cập nhật dữ liệu
-- [ ] Download file trực tiếp từu website tổng cục thống kê
+- [ ] Cập nhật dữ liệu
+- [ ] Download file trực tiếp từ website tổng cục thống kê
 
 ## Screenshot
 
