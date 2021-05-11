@@ -11,9 +11,9 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "illuminate/support": "^5.8|^6|^7",
-        "illuminate/database": "^5.8|^6|^7",
-        "illuminate/console": "^5.8|^6|^7",
+        "illuminate/support": "^5.8|^6|^7|^8",
+        "illuminate/database": "^5.8|^6|^7|^8",
+        "illuminate/console": "^5.8|^6|^7|^8",
         "guzzlehttp/guzzle": "^6.3.1|^7.0",
         "maatwebsite/excel": "^3.0"
     },
