@@ -1,5 +1,6 @@
 <?php
 return [
+    'remote_update' => "https://github.com/kjmtrue/vietnam-zone/raw/database/vietnam-zone.xls",
     'tables' => [
         'provinces' => 'provinces',
         'districts' => 'districts',

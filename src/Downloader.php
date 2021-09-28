@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 
 class Downloader
 {
-    const DOWNLOAD_URL = 'https://github.com/kjmtrue/vietnam-zone/raw/database/vietnam-zone.xls';
+    const DOWNLOAD_URL = config('vietnam-zone.remote_update');
 
     /**
      * Download database VietNam Zone
