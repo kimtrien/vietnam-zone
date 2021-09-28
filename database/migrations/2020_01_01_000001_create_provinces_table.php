@@ -17,6 +17,7 @@ class CreateProvincesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('gso_id');
+            $table->tinyInteger('published')->default(1);
             $table->timestamps();
         });
     }
