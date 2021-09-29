@@ -6,8 +6,6 @@ use GuzzleHttp\Client;
 
 class Downloader
 {
-    const DOWNLOAD_URL = 'https://github.com/kjmtrue/vietnam-zone/raw/database/vietnam-zone.xls';
-
     /**
      * Download database VietNam Zone
      *
@@ -20,7 +18,7 @@ class Downloader
             'verify' => false
         ]);
 
-        $res = $client->get(self::DOWNLOAD_URL, [
+        $res = $client->get(config('vietnam-zone.remote_update'), [
             'save_to' => storage_path('vietnam-zone.xls')
         ]);
 

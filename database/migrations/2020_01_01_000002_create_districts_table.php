@@ -18,6 +18,7 @@ class CreateDistrictsTable extends Migration
             $table->string(config('vietnam-zone.columns.name'));
             $table->string(config('vietnam-zone.columns.gso_id'));
             $table->unsignedBigInteger(config('vietnam-zone.columns.province_id'));
+            $table->tinyInteger('published')->default(1);
             $table->timestamps();
 
             $table->foreign(config('vietnam-zone.columns.province_id'))
