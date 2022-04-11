@@ -3,6 +3,7 @@
 namespace Kjmtrue\VietnamZone\Imports;
 
 use Illuminate\Support\Facades\DB;
+use Kjmtrue\VietnamZone\Models\Ward;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -33,28 +34,29 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
     {
         $wardImport = [];
         foreach ($array as $item) {
-            if (empty($item['ma']) || empty($item['ten'])) {
-                continue;
-            }
+            if (!empty($item['ma_tp']) && !empty($item['ma_qh']) && !empty($item['ma_px'])) {
+                if (!empty($this->wardMap[$item['ma_px']])) {
+                    Ward::whereGsoId($this->wardMap[$item['ma_px']])->update(['name' => $item['phuong_xa']]);
+                } else {
+                    $districtId = $this->getDistrictId($item);
 
-            if (isset($this->wardMap[$item['ma']])) {
-                continue;
+                    $wardImport[] = [
+                        'name' => $item['phuong_xa'],
+                        'gso_id' => $item['ma_px'],
+                        'district_id' => $districtId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
             }
-
-            $districtId = $this->getDistrictId($item);
-            $wardImport[] = [
-                config('vietnam-zone.columns.name')        => $item['ten'],
-                config('vietnam-zone.columns.gso_id')      => $item['ma'],
-                config('vietnam-zone.columns.district_id') => $districtId,
-                'created_at'                               => now(),
-                'updated_at'                               => now(),
-            ];
         }
 
         try {
-            DB::table(config('vietnam-zone.tables.wards'))->insert($wardImport);
+            DB::table('wards')->insert($wardImport);
         } catch (\Exception $e) {
-            // Code
+            \Log::error('VienamZoneImport', [
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -75,11 +77,11 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
 
     private function createProvince(array $item)
     {
-        $provinceId = DB::table(config('vietnam-zone.tables.provinces'))->insertGetId([
-            config('vietnam-zone.columns.name')   => $item['tinh_thanh_pho'],
-            config('vietnam-zone.columns.gso_id') => $item['ma_tp'],
-            'created_at'                          => now(),
-            'updated_at'                          => now(),
+        $provinceId = DB::table('provinces')->insertGetId([
+            'name' => $item['tinh_thanh_pho'],
+            'gso_id' => $item['ma_tp'],
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->provinceMap[$item['ma_tp']] = $provinceId;
@@ -91,12 +93,12 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
     {
         $provinceId = $this->getProvinceId($item);
 
-        $districtId = DB::table(config('vietnam-zone.tables.districts'))->insertGetId([
-            config('vietnam-zone.columns.name')        => $item['quan_huyen'],
-            config('vietnam-zone.columns.gso_id')      => $item['ma_qh'],
-            config('vietnam-zone.columns.province_id') => $provinceId,
-            'created_at'                               => now(),
-            'updated_at'                               => now(),
+        $districtId = DB::table('districts')->insertGetId([
+            'name' => $item['quan_huyen'],
+            'gso_id' => $item['ma_qh'],
+            'province_id' => $provinceId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->districtMap[$item['ma_qh']] = $districtId;
@@ -106,10 +108,10 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
 
     private function createProvinceMap()
     {
-        $provinces = DB::table(config('vietnam-zone.tables.provinces'))->get();
+        $provinces = DB::table('provinces')->get(['gso_id', 'id']);
 
         $this->provinceMap = $provinces
-            ->keyBy(config('vietnam-zone.columns.gso_id'))
+            ->keyBy('gso_id')
             ->map(function ($item) {
                 return $item->id;
             })
@@ -118,10 +120,10 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
 
     private function createDistrictMap()
     {
-        $districts = DB::table(config('vietnam-zone.tables.districts'))->get();
+        $districts = DB::table('districts')->get(['gso_id', 'id']);
 
         $this->districtMap = $districts
-            ->keyBy(config('vietnam-zone.columns.gso_id'))
+            ->keyBy('gso_id')
             ->map(function ($item) {
                 return $item->id;
             })
@@ -130,10 +132,10 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
 
     private function createWardMap()
     {
-        $wards = DB::table(config('vietnam-zone.tables.wards'))->get();
+        $wards = DB::table('wards')->get(['gso_id', 'id']);
 
         $this->wardMap = $wards
-            ->keyBy(config('vietnam-zone.columns.gso_id'))
+            ->keyBy('gso_id')
             ->map(function ($item) {
                 return $item->id;
             })
