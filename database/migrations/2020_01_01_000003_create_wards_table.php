@@ -13,17 +13,16 @@ class CreateWardsTable extends Migration
      */
     public function up()
     {
-        Schema::create(config('vietnam-zone.tables.wards'), function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string(config('vietnam-zone.columns.name'));
-            $table->string(config('vietnam-zone.columns.gso_id'));
-            $table->unsignedBigInteger(config('vietnam-zone.columns.district_id'));
-            $table->tinyInteger('published')->default(1);
+        Schema::create('wards', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('gso_id');
+            $table->unsignedBigInteger('district_id');
             $table->timestamps();
 
-            $table->foreign(config('vietnam-zone.columns.district_id'))
+            $table->foreign('district_id')
                 ->references('id')
-                ->on(config('vietnam-zone.tables.districts'))
+                ->on('districts')
                 ->cascadeOnDelete();
         });
     }
