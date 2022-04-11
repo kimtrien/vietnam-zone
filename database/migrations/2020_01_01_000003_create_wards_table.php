@@ -34,6 +34,6 @@ class CreateWardsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(config('vietnam-zone.tables.wards'));
+        Schema::dropIfExists('wards');
     }
 }

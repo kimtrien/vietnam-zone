@@ -3,6 +3,8 @@
 namespace Kjmtrue\VietnamZone\Imports;
 
 use Illuminate\Support\Facades\DB;
+use Kjmtrue\VietnamZone\Models\District;
+use Kjmtrue\VietnamZone\Models\Province;
 use Kjmtrue\VietnamZone\Models\Ward;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToArray;
@@ -77,33 +79,29 @@ class VienamZoneImport implements WithHeadingRow, SkipsOnFailure, ToArray, WithC
 
     private function createProvince(array $item)
     {
-        $provinceId = DB::table('provinces')->insertGetId([
+        $province = Province::create([
             'name' => $item['tinh_thanh_pho'],
             'gso_id' => $item['ma_tp'],
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $this->provinceMap[$item['ma_tp']] = $provinceId;
+        $this->provinceMap[$item['ma_tp']] = $province->id;
 
-        return $provinceId;
+        return $province->id;
     }
 
     private function createDistrict(array $item)
     {
         $provinceId = $this->getProvinceId($item);
 
-        $districtId = DB::table('districts')->insertGetId([
+        $district = District::create([
             'name' => $item['quan_huyen'],
             'gso_id' => $item['ma_qh'],
             'province_id' => $provinceId,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $this->districtMap[$item['ma_qh']] = $districtId;
+        $this->districtMap[$item['ma_qh']] = $district->id;
 
-        return $districtId;
+        return $district->id;
     }
 
     private function createProvinceMap()
