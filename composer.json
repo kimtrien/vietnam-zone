@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "guzzlehttp/guzzle": "^6.3.1|^7.0|^8",
-        "maatwebsite/excel": "^3.0"
+        "maatwebsite/excel": "^3"
     },
     "autoload": {
         "psr-4": {
